@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Para Isa</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ffe3ec, #fff6e5);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      color: #444;
+      text-align: center;
+    }
+
+    .pantalla {
+      display: none;
+      background: white;
+      width: 100%;
+      max-width: 430px;
+      padding: 35px 25px;
+      border-radius: 24px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+    }
+
+    .pantalla.activa {
+      display: block;
+      animation: aparecer 0.5s ease;
+    }
+
+    @keyframes aparecer {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    img {
+      width: 100%;
+      max-width: 300px;
+      border-radius: 18px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 26px;
+      margin: 0 0 12px;
+    }
+
+    p {
+      font-size: 18px;
+      line-height: 1.5;
+      color: #666;
+    }
+
+    .botones {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 25px;
+      position: relative;
+      min-height: 55px;
+    }
+
+    button {
+      border: none;
+      padding: 14px 28px;
+      border-radius: 30px;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .btn-si {
+      background: #ff5c8a;
+      color: white;
+    }
+
+    .btn-si:hover {
+      background: #ff3d75;
+      transform: scale(1.05);
+    }
+
+    .btn-no {
+      background: #e5e5e5;
+      color: #777;
+      position: absolute;
+    }
+
+    .btn-siguiente {
+      background: #7c5cff;
+      color: white;
+      margin-top: 25px;
+    }
+
+    .btn-siguiente:hover {
+      background: #6544f5;
+      transform: scale(1.05);
+    }
+
+    audio {
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .oculto {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PANTALLA 1 -->
+  <section id="pantalla1" class="pantalla activa">
+    <img src="img/chayanne-hola.jpg" alt="Chayanne saludando">
+    <h1>¡Hola Isa!</h1>
+    <p>Soy Chayanne 👋</p>
+    <button class="btn-siguiente" onclick="irAPantalla(2)">Siguiente</button>
+  </section>
+
+  <!-- PANTALLA 2 -->
+  <section id="pantalla2" class="pantalla">
+    <img src="img/chayanne-brian.jpg" alt="Chayanne">
+    <h1>Un mensajito…</h1>
+    <p>Brian puede ser un idiota a veces, pero le gustas.</p>
+    <button class="btn-siguiente" onclick="irAPantalla(3)">Siguiente</button>
+  </section>
+
+  <!-- PANTALLA 3 -->
+  <section id="pantalla3" class="pantalla">
+    <img src="img/chayanne-perdon.jpg" alt="Chayanne pidiendo perdón">
+    <h1>¿Lo perdonas?</h1>
+    <p>Piénsalo bien… 😉</p>
+
+    <div class="botones">
+      <button class="btn-si" onclick="perdonar()">Sí</button>
+      <button id="btnNo" class="btn-no">No</button>
+    </div>
+  </section>
+
+  <!-- PANTALLA FINAL -->
+  <section id="pantalla4" class="pantalla">
+    <img src="img/chayanne-final.jpg" alt="Chayanne feliz">
+    <h1>¡Qué buena chica!</h1>
+    <p>Te dedico esta canción 🎶</p>
+
+    <audio id="cancion" controls autoplay loop>
+      <source src="cancion.mp3" type="audio/mpeg">
+      Tu navegador no puede reproducir la canción.
+    </audio>
+
+    <form id="formularioSi" action="https://formspree.io/f/xnppdzzn" method="POST">
+      <input type="hidden" name="respuesta" value="Isa perdono a Brian">
+      <button type="submit" class="btn-siguiente">Enviar mi respuesta</button>
+    </form>
+
+    <p id="mensajeEnviado" class="oculto">¡Gracias, Isa! 💖</p>
+  </section>
+
+  <script>
+    function irAPantalla(numero) {
+      document.querySelectorAll(".pantalla").forEach(function(p) {
+        p.classList.remove("activa");
+      });
+
+      document.getElementById("pantalla" + numero).classList.add("activa");
+    }
+
+    const btnNo = document.getElementById("btnNo");
+
+    function moverNo() {
+      const contenedor = btnNo.parentElement;
+      const ancho = contenedor.clientWidth;
+      const alto = contenedor.clientHeight;
+
+      const nuevaX = Math.random() * (ancho - btnNo.offsetWidth);
+      const nuevaY = Math.random() * (alto - btnNo.offsetHeight);
+
+      btnNo.style.left = nuevaX + "px";
+      btnNo.style.top = nuevaY + "px";
+    }
+
+    btnNo.addEventListener("mouseenter", moverNo);
+    btnNo.addEventListener("touchstart", function(e) {
+      e.preventDefault();
+      moverNo();
+    });
+    btnNo.addEventListener("click", function(e) {
+      e.preventDefault();
+      moverNo();
+    });
+
+    function perdonar() {
+      irAPantalla(4);
+
+      const cancion = document.getElementById("cancion");
+      cancion.play().catch(function() {
+        // Si el navegador bloquea el autoplay, Isa podrá darle play manualmente.
+      });
+    }
+
+    document.getElementById("formularioSi").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const formulario = e.target;
+      const datos = new FormData(formulario);
+
+      try {
+        const respuesta = await fetch(formulario.action, {
+          method: "POST",
+          body: datos,
+          headers: {
+            "Accept": "application/json"
+          }
+        });
+
+        if (respuesta.ok) {
+          document.getElementById("mensajeEnviado").classList.remove("oculto");
+          formulario.querySelector("button").disabled = true;
+        } else {
+          alert("Hubo un problema al enviar la respuesta.");
+        }
+      } catch (error) {
+        alert("No se pudo enviar la respuesta. Revisa tu conexión.");
+      }
+    });
+  </script>
+
+</body>
+</html>
